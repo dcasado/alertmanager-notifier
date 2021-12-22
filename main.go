@@ -20,7 +20,7 @@ type Alert struct {
 	Status string `json:"status"`
 	Labels struct {
 		Alertname string `json:"alertname"`
-		Service   string `json:"service"`
+		Instance  string `json:"instance"`
 		Severity  string `json:"severity"`
 	} `json:"labels"`
 	Annotations struct {
@@ -212,7 +212,7 @@ func buildGotifyMessage(alert Alert) GotifyMessage {
 		log.Printf("Summary annotation not set in alert %s", alert.Labels.Alertname)
 	}
 
-	gotifyMessage.Message = fmt.Sprintf("[%s] ", alert.Labels.Service)
+	gotifyMessage.Message = fmt.Sprintf("[%s] ", alert.Labels.Instance)
 	if description := alert.Annotations.Description; len(description) != 0 {
 		gotifyMessage.Message += description
 	} else {
