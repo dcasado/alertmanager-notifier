@@ -43,6 +43,9 @@ const (
 	listenAddressEnvVariable       = "LISTEN_ADDRESS"
 	listenPortEnvVariable          = "LISTEN_PORT"
 	defaultPriorityEnvVariable     = "DEFAULT_PRIORITY"
+
+	alertsEndpoint = "/alerts"
+	healthEndpoint = "/health"
 )
 
 var (
@@ -60,8 +63,8 @@ func main() {
 	log.Printf("Starting server listening on %s:%s", listenAddress, listenPort)
 
 	serveMux := http.NewServeMux()
-	serveMux.HandleFunc("/alerts", handleAlerts)
-	serveMux.HandleFunc("/health", handleHealth)
+	serveMux.HandleFunc(alertsEndpoint, handleAlerts)
+	serveMux.HandleFunc(healthEndpoint, handleHealth)
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", listenAddress, listenPort),
@@ -135,7 +138,7 @@ func setupDefaultPriorityEnvVariable() {
 
 func handleAlerts(responseWriter http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodPost {
-		log.Printf("Method %s not allowed", request.Method)
+		log.Printf("Method %s not allowed on %s endpoint", request.Method, request.URL)
 		http.Error(responseWriter, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
@@ -188,6 +191,12 @@ func handleAlerts(responseWriter http.ResponseWriter, request *http.Request) {
 }
 
 func handleHealth(responseWriter http.ResponseWriter, request *http.Request) {
+	if request.Method != http.MethodGet {
+		log.Printf("Method %s not allowed on %s endpoint", request.Method, request.URL)
+		http.Error(responseWriter, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+
 	responseWriter.WriteHeader(http.StatusOK)
 	responseWriter.Header().Set("Content-Type", "application/text")
 	responseWriter.Write([]byte("Ok"))
