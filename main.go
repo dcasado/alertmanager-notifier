@@ -26,7 +26,7 @@ type Alert struct {
 	Annotations struct {
 		Summary     string `json:"summary"`
 		Description string `json:"description"`
-		Priority    int    `json:"priority"`
+		Priority    string `json:"priority"`
 	} `json:"annotations"`
 }
 
@@ -129,8 +129,8 @@ func setupDefaultPriorityEnvVariable() {
 	value := os.Getenv(defaultPriorityEnvVariable)
 	if len(value) != 0 {
 		defaultPriorityInt, err := strconv.Atoi(value)
-		if err != nil || defaultPriorityInt < 1 {
-			log.Fatalln("Invalid default priority. Must be a number greater than 0")
+		if err != nil {
+			log.Fatalln("Invalid default priority value")
 		}
 		defaultPriority = defaultPriorityInt
 	}
@@ -219,8 +219,16 @@ func buildGotifyMessage(alert Alert) GotifyMessage {
 		log.Printf("Description annotation not set in alert %s", alert.Labels.Alertname)
 	}
 
-	if gotifyMessage.Priority = alert.Annotations.Priority; gotifyMessage.Priority < 1 {
-		log.Printf("Priority annotation not set or lower than 1 in alert %s. Defaults to %d", alert.Labels.Alertname, defaultPriority)
+	if priorityValue := alert.Annotations.Priority; len(priorityValue) != 0 {
+		priority, err := strconv.Atoi(priorityValue)
+		if err != nil {
+			log.Printf("Priority annotation value not valid in alert %s. Defaults to %d", alert.Labels.Alertname, defaultPriority)
+			gotifyMessage.Priority = defaultPriority
+		} else {
+			gotifyMessage.Priority = priority
+		}
+	} else {
+		log.Printf("Priority annotation not set in alert %s. Defaults to %d", alert.Labels.Alertname, defaultPriority)
 		gotifyMessage.Priority = defaultPriority
 	}
 
