@@ -212,7 +212,10 @@ func buildGotifyMessage(alert Alert) GotifyMessage {
 		log.Printf("Summary annotation not set in alert %s", alert.Labels.Alertname)
 	}
 
-	gotifyMessage.Message = fmt.Sprintf("[%s] ", alert.Labels.Instance)
+	if instance := alert.Labels.Instance; len(instance) != 0 {
+		gotifyMessage.Message = fmt.Sprintf("[%s] ", alert.Labels.Instance)
+	}
+
 	if description := alert.Annotations.Description; len(description) != 0 {
 		gotifyMessage.Message += description
 	} else {
