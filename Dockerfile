@@ -1,13 +1,22 @@
-FROM golang:1.17.5-alpine3.15 AS builder
+FROM golang:1.17.5-alpine3.15 AS tester
+
+WORKDIR /app
+
+# Copy files
+COPY go.mod ./
+COPY main.go ./
+COPY main_test.go ./
+
+# Run tests
+RUN CGO_ENABLED=0 go test -v -timeout 30s
+
+
+FROM tester AS builder
 
 # Add group and user
 RUN addgroup -S alertmanager2gotify && adduser -S alertmanager2gotify -G alertmanager2gotify
 
-WORKDIR /app
-
-COPY go.mod ./
-
-COPY main.go ./
+# Build binary
 RUN CGO_ENABLED=0 go build -o alertmanager2gotify
 
 
