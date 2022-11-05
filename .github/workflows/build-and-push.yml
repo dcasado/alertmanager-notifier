@@ -20,8 +20,8 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            davidcasado/alertmanager2gotify
-            ghcr.io/dcasado/alertmanager2gotify
+            davidcasado/alertmanager-notifier
+            ghcr.io/dcasado/alertmanager-notifier
           # generate Docker tags based on the following events/attributes
           tags: |
             type=semver,pattern={{version}}
