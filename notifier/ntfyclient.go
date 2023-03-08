@@ -67,7 +67,7 @@ func (n *ntfyClient) Notify(alert alertmanager.Alert) error {
 
 	resp, err := n.httpClient.Do(request)
 	if err != nil {
-		return NewErrNotAvailable(n.url)
+		return NewErrNotAvailable(n.url, err.Error())
 	} else {
 		if resp.StatusCode >= http.StatusBadRequest {
 			return NewErrHTTPError(resp.StatusCode, http.StatusText(resp.StatusCode))

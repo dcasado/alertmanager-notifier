@@ -71,7 +71,7 @@ func (g *gotifyClient) Notify(alert alertmanager.Alert) error {
 
 	resp, err := g.httpClient.Do(request)
 	if err != nil {
-		return NewErrNotAvailable(g.url)
+		return NewErrNotAvailable(g.url, err.Error())
 	} else {
 		if resp.StatusCode >= http.StatusBadRequest {
 			return NewErrHTTPError(resp.StatusCode, http.StatusText(resp.StatusCode))
