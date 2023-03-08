@@ -14,14 +14,15 @@ const (
 
 type ErrNotAvailable struct {
 	url string
+	msg string
 }
 
-func NewErrNotAvailable(url string) error {
-	return ErrNotAvailable{url: url}
+func NewErrNotAvailable(url string, msg string) error {
+	return ErrNotAvailable{url: url, msg: msg}
 }
 
 func (e ErrNotAvailable) Error() string {
-	return fmt.Sprintf("notifier %s not available", e.url)
+	return fmt.Sprintf("notifier %s not available: %s", e.url, e.msg)
 }
 
 type ErrHTTPError struct {

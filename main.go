@@ -90,15 +90,17 @@ func handleAlerts(responseWriter http.ResponseWriter, request *http.Request) {
 	for _, alert := range body.Alerts {
 		err := s.Notify(alert)
 		if err != nil {
+			log.Printf("Error from notifier: %s", err)
 			switch err.(type) {
 			case notifier.ErrNotAvailable:
 				http.Error(responseWriter, err.Error(), http.StatusGatewayTimeout)
+				return
 			case notifier.ErrHTTPError:
-				log.Printf("Error sending message: %s", err)
 				http.Error(responseWriter, err.Error(), http.StatusBadGateway)
+				return
 			default:
-				log.Printf("Unexpected error from notifier: %s", err)
 				http.Error(responseWriter, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
 			}
 		}
 	}
