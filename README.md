@@ -1,4 +1,4 @@
-alertmanager-notifier is an adapter from [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager) webhook requests to [Gotify](https://gotify.net) or [NTFY][https://ntfy.sh/]. It transforms your alert manager alerts into notifications.
+alertmanager-notifier is an adapter from [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager) webhook requests to [Gotify](https://gotify.net) or [NTFY](https://ntfy.sh/). It transforms your alert manager alerts into notifications.
 
 # Environment variables
 
