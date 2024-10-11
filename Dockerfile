@@ -1,4 +1,4 @@
-FROM golang:1.20.4-alpine3.16 AS tester
+FROM golang:1.23.2-alpine AS tester
 
 WORKDIR /app
 

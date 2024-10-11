@@ -15,9 +15,6 @@ const (
 	listenAddressEnvVariable = "LISTEN_ADDRESS"
 	listenPortEnvVariable    = "LISTEN_PORT"
 	notifierTypeEnvVariable  = "NOTIFIER_TYPE"
-
-	alertsEndpoint = "/alerts"
-	healthEndpoint = "/health"
 )
 
 var s notifier.Notifier
@@ -32,8 +29,8 @@ func main() {
 	log.Printf("Starting server listening on %s:%s", listenAddress, listenPort)
 
 	serveMux := http.NewServeMux()
-	serveMux.HandleFunc(alertsEndpoint, handleAlerts)
-	serveMux.HandleFunc(healthEndpoint, handleHealth)
+	serveMux.HandleFunc("POST /alerts", handleAlerts)
+	serveMux.HandleFunc("GET /health", handleHealth)
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", listenAddress, listenPort),
@@ -71,12 +68,6 @@ func getNotifierTypeEnvVariable() string {
 }
 
 func handleAlerts(responseWriter http.ResponseWriter, request *http.Request) {
-	if request.Method != http.MethodPost {
-		log.Printf("Method %s not allowed on %s endpoint", request.Method, request.URL)
-		http.Error(responseWriter, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-
 	var body alertmanager.RequestBody
 
 	decoder := json.NewDecoder(request.Body)
@@ -107,12 +98,6 @@ func handleAlerts(responseWriter http.ResponseWriter, request *http.Request) {
 }
 
 func handleHealth(responseWriter http.ResponseWriter, request *http.Request) {
-	if request.Method != http.MethodGet {
-		log.Printf("Method %s not allowed on %s endpoint", request.Method, request.URL)
-		http.Error(responseWriter, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
-	}
-
 	responseWriter.WriteHeader(http.StatusOK)
 	responseWriter.Header().Set("Content-Type", "application/text")
 	responseWriter.Write([]byte("Ok"))

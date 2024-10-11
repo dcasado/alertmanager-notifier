@@ -1,3 +1,3 @@
 module github.com/dcasado/alertmanager-notifier
 
-go 1.19
+go 1.23
